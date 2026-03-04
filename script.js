@@ -212,7 +212,7 @@ function trierParNote(liste) {
 
 console.log("\n--- Triés par note ---");
 afficherFilmsConsole(trierParNote(films));
-
+//à commiter
 
 // ============================================================
 // PHASE 4 : RECHERCHER (M5)
