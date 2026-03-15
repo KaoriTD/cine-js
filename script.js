@@ -230,13 +230,14 @@ afficherFilmsConsole(trierParNote(films));
 function rechercherFilm(liste, terme) {
   // si pas de terme → retourner la liste entière
   if (terme.length < 1) {
-    return [];
+    return liste;
   }
   // filter → titre OU réalisateur contient le terme
   terme = terme.toLowerCase();
+
   return liste.filter((film) =>
-      film.realisateur.toLowerCase().includes(terme)) ||
-      film.titre.toLowerCase().includes(terme);
+      film.realisateur.toLowerCase().includes(terme) ||
+      film.titre.toLowerCase().includes(terme));
 }
 
 console.log("\n--- Recherche 'nolan' ---");
@@ -255,8 +256,19 @@ afficherFilmsConsole(rechercherFilm(films, "nolan"));
  * @returns {string} Le HTML de la carte
  */
 function creerCarteFilm(film) {
-  // TODO : retourner un template literal avec le HTML
+  // retourner un template literal avec le HTML
   // Voir la carte d'exemple commentée dans index.html
+  return `<article class="film-card">
+    <img src="${film.poster}" alt="${film.titre}" class="film-poster">
+      <div class="film-info">
+        <h3>${film.titre}</h3>
+        <p class="film-meta">${film.annee}</p>
+        <p class="film-realisateur">${film.realisateur}</p>
+        <div class="${film.note}">
+          <span class="note-badge">8.8</span>
+        </div>
+      </div>
+  </article>`;
 }
 
 /**
@@ -265,11 +277,20 @@ function creerCarteFilm(film) {
  * @param {Object[]} liste - Le tableau de films à afficher
  */
 function afficherFilmsHTML(liste) {
-  // TODO : sélectionner #films-container
-  // TODO : si liste vide → message "Aucun film trouvé"
-  // TODO : sinon → forEach pour construire le HTML
+  // sélectionner #films-container
+  const container = document.querySelector("#films-container");
+  // si liste vide → message "Aucun film trouvé"
+  if (liste.length === 0) {
+    container.innerHTML = `<p class="empty-message">Aucun film trouvé</p>`;
+  }
+  // Supprime tous les films du container
+  container.innerHTML = "";
+  //sinon → forEach pour construire le HTML
+  liste.forEach(film => {
+    container.innerHTML += creerCarteFilm(film);
+  });
 }
-
+//afficherFilmsHTML(films);
 
 // ============================================================
 // PHASE 6 : CONTRÔLES INTERACTIFS (preview M8)
@@ -280,10 +301,14 @@ function afficherFilmsHTML(liste) {
  * Rafraîchit l'affichage : recherche → tri → affichage HTML.
  */
 function rafraichir() {
-  // TODO : lire la valeur de #recherche
-  // TODO : chaîner rechercherFilm → trierParNote → afficherFilmsHTML
+  //lire la valeur de #recherche
+  const recherche = document.querySelector("#recherche").value;
+  // chaîner rechercherFilm → trierParNote → afficherFilmsHTML
+  let filmsTrouves = rechercherFilm(films, recherche);
+  afficherFilmsHTML(filmsTrouves);
 }
 
-// TODO : addEventListener "input" sur #recherche → rafraichir
-
+// addEventListener "input" sur #recherche → rafraichir
+document.querySelector("#recherche").addEventListener("input", rafraichir);
 // TODO : appeler rafraichir() pour l'affichage initial
+rafraichir();
